@@ -272,5 +272,5 @@ Gate默认要求命令与许可各在0.4 s内刷新，扫描0.5 s内刷新。\te
 \begin{equation}
 e_E(t)=\|p_r-p_l\|-d_f,\quad e_\perp(t)=\min_{q\in\Gamma_l}\|p_r-q\|,\quad T_{\mathrm{stop}}=t_{\mathrm{stopped}}-t_{\mathrm{fault}}.
 \end{equation}
-停止可能是任务许可暂停、目标丢失、间距过小、地图过期、足迹受阻或导航失败，含义不同。\texttt{waiting\_\allowbreak for\_\allowbreak leader\_\allowbreak trail}属于启动等待，不能与导航失败一概统计。当前没有完整实机日志，不填虚构成功率；既有Kinetic隔离检查只支持部分失效零速逻辑，并不证明物理避障或全程跟随成功。
+停止可能是任务许可暂停、目标丢失、间距过小、地图过期、足迹受阻或导航失败，含义不同。\texttt{waiting\_\allowbreak for\_\allowbreak leader\_\allowbreak trail}属于启动等待，不能与导航失败一概统计。完整路线还需要继续测试。已有Kinetic隔离检查主要检查输入失效时能否归零，实际避障和全程跟随效果仍要结合现场运行记录。
 \source{\code{map_follower.py}；\code{velocity_gate.py}；实验原始记录。}

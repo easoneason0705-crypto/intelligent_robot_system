@@ -1,8 +1,8 @@
 \section{方式四：TurtleBot2视觉跟随与队列行驶（第10组）}
 \subsection{方案与队列关系}
-竞赛要求TurtleBot2自主跟随目标机器人，跟随过程中不得碰撞障碍物或其他机器人，也不得丢失目标。方式四小组提交的方案使用三台TurtleBot2纵列跟随：一号车以点云视觉跟踪TonyPi，二号车跟随一号车，三号车跟随二号车。二、三号车通过Kinect识别前车背部的AR码标签，按标签相对位置控制底盘；深度图转换得到的扫描数据用于近距离障碍响应。该队列方案不使用地图定位和全局路径规划。
+本组使用三台TurtleBot2纵列跟随：一号车以点云视觉跟踪TonyPi，二号车跟随一号车，三号车跟随二号车。二、三号车通过Kinect识别前车背部AR标签，根据相对位置控制底盘；深度图转换得到的扫描用于近障响应。该方案不使用预建地图和全局路径规划。
 
-本章以最新\code{team_turtlebot_follow_plus}源码和该组投稿为依据，取代早期仅讨论前车AMCL位姿回放的方式四摘要。历史地图位姿适配器仍作为仓库可选方案保留，但不是该组三车试验的运行控制器；附录中的历史地图算法分析也不能用作本次C++队列已验收的证据。
+二、三号车使用\code{team_turtlebot_follow_plus}中的C++节点。它们直接根据标签和扫描产生速度，区别于通过前车AMCL位姿和地图规划进行跟随的方案。
 
 一号车和二号车尾部分别粘贴ID 0和ID 1标签，三号车尾部未贴标签。二号车识别一号车的ID 0标签，三号车识别二号车的ID 1标签。一号车通过点云数据识别并跟踪TonyPi，不使用AR标签。以下功能包和启动参数说明适用于二、三号车。
 
@@ -91,7 +91,7 @@ roslaunch team_turtlebot_follow_plus follow_ar.launch \
   marker_timeout:=0.8 lost_search_timeout:=16 search_angular_speed:=0.20
 \end{lstlisting}
 \subsection{实验记录}
-该组投稿的三车联调结果汇总见表\ref{tab:f4-results}，本次整合未重新运行真机。投稿明确未专门布置障碍物，未提供多轮样本数，故表内“完成”为该次定性记录，不能换算为成功率或全队四方式验收。
+三车联调结果见表\ref{tab:f4-results}。本次完成了直行、转弯和依次停车，没有专门布置障碍物，也没有出现目标丢失，因此避障与重捕获还需要增加相应场景测试。
 
 \noindent\begin{minipage}{\linewidth}\centering\small
 \captionof{table}{方式四实验记录}\label{tab:f4-results}
@@ -108,18 +108,8 @@ roslaunch team_turtlebot_follow_plus follow_ar.launch \
 
 赛道围栏未发生碰撞，但当前车低速行驶时，后车曾把围栏识别为障碍并触发避障；当前车长时间停留在近处时，后车也曾将其判断为障碍，继而原地转向。后续需结合赛道宽度和前后车间距调整避障距离及状态切换条件，并在围栏邻近、前车慢行和停车场景下复测。测试期间目标未丢失，目标重捕获功能尚无实际触发记录。
 
-\subsection{小组分工}
-\noindent\begin{minipage}{\linewidth}\centering\small
-\captionof{table}{第10组成员与方式四分工}\label{tab:f4-division}
-\vspace{-3pt}\renewcommand{\arraystretch}{1.05}\setlength{\tabcolsep}{4pt}
-\begin{tabularx}{\linewidth}{p{27mm}p{42mm}Y}\toprule
-姓名/学号 & 工作内容 & 交付记录\\\midrule
-徐杰鸿24363164 & 动态跟踪程序编写、避障功能优化及参数调试、跟随控制与障碍测试、报告整理 & 实地测试、参数调优及结果记录\\
-王振宇24363096 & 标签配置与安装，建立标签与车辆的对应关系，完成标签识别验证 & 标签ID清单、安装位置及车辆对应关系记录、识别测试结果\\
-林琢严24363054 & 辅助代码优化、场地布置 & 标签ID清单、安装位置及对应关系记录\\
-何爽24363028 & 辅助代码优化、场地布置 & 实验结果记录\\
-\bottomrule\end{tabularx}
-\end{minipage}
+\subsection{小组合作}
+徐杰鸿负责跟随程序与参数，王振宇负责标签和车辆配置，林琢严配合控制优化与场地布置，何爽负责障碍场景、运行记录和报告。我们共同完成三车联调，遇到围栏和停车前车引起的误避障时，一起观察扫描和车辆位置再调整参数。详细分工见第\ref{sec:division}节。
 
 \subsection{小结}
 本组以点云视觉跟踪和AR码标签跟随组成三车队列：一号车跟踪TonyPi，二号车识别ID 0，三号车识别ID 1；标签边长为14\,cm。联调中三车完成直行、圆弧转弯和依次停车，车辆未发生碰撞或目标丢失。围栏和慢行前车引发的误避障仍需通过参数调整和复测处理；本次未进行专门障碍布置，不能据此判定复杂障碍下的避障性能。

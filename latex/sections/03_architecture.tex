@@ -1,41 +1,32 @@
 \section{系统架构与协同接口}
 \input{sections/03_collective_coordination}
-\subsection{分层控制}
-人形机器人负责物体搬运与领行；TurtleBot负责各自的目标观测、定位和运动控制。不同机器人的执行器由各自进程独占，感知线程只提供观测，避免多个程序同时写舵机或底盘速度。图\ref{fig:architecture}描述方式二的完整数据链；任务心跳是可选适配接口，不代表所有人形入口已经发送心跳。
+\subsection{感知、决策与执行}
+我们将系统分为感知、决策和执行三部分。相机或深度传感器提供目标与环境信息，控制程序选择动作或导航目标，舵机和底盘完成运动。人形机器人负责物块搬运与领行，各TurtleBot负责自身的跟随控制。调试时，我们先分别检查每一条链路，再检查它们之间的配合。
 \begin{figure}[H]\centering
 \input{figures/system_architecture.tex}
-\caption{人形机器人与方式二跟随的数据链}\label{fig:architecture}
+\caption{人形机器人与地图跟随的数据链}\label{fig:architecture}
 \end{figure}
+图中的实线表示已经定义的感知和执行流程，虚线表示任务状态接口。后车能够看见前车，并不一定说明前车已经允许继续运行；例如TonyPi暂停或出现抓取问题时，跟随程序还需要相应停止。因此视觉观测、任务状态和运动输出应分别检查。
 
-图中两条实线链分别对应人形动作控制和移动底盘导航，二者通过任务语义协同。底部虚线表示尚需适配的任务许可接口：它必须把领航者的运行状态显式传给跟随门控，不能由相机“仍能看见目标”代替。因而感知有效、任务允许运动和底盘速度输出应分别核对。
+\subsection{软硬件环境与功能包}
+TonyPi使用Python 3、OpenCV、NumPy、PyYAML以及设备上的舵机SDK。不同机器人的系统镜像和接口有所不同，我们在更换设备时需要检查串口、动作路径和相机输入。TurtleBot采用课程虚拟机中的Ubuntu 16.04、ROS Kinetic和Python 2.7环境，各功能包放在\code{~/catkin_ws/src}下编译。
 
-
-\subsection{软件平台与版本边界}
-本稿主体最初依据\code{7bbf588}分析，新增视频后对GitHub主分支\code{43a7771}进行了针对性核对。TonyPi路线入口、前车位姿转发、地图跟随器和轨迹核心逻辑保持一致；当前\code{follow_map.launch}将速度门控指向\code{ar_marker_following}功能包，而非旧快照中的\code{multi_robot_following}。下述架构功能不变，但复现命令应使用当前包归属。复核文件保存在\code{code_snapshot_current}，原始分析快照保留在\code{code_snapshot}，以免将不同版本证据混写\cite{repo-current}。
-
-TonyPi 使用 Python 3、OpenCV、NumPy、PyYAML及设备原装舵机SDK；不同树莓派镜像的串口、SDK和相机接口存在差异，应使用实际部署配置。TurtleBot课程虚拟机为 Ubuntu 16.04、ROS Kinetic、Python 2.7，功能包放置于 \code{~/catkin_ws/src}，不能直接用 Python 3 替换 ROS 节点解释器。
+AR识别和速度门控放在\code{ar_marker_following}中，地图跟随放在\code{multi_robot_following}中，共用的轨迹与检查函数由\code{competition_core}提供。这样可以复用功能，但也要求编译时同时包含相应依赖。各组调整程序后，还需要确认launch中填写的包名和实际脚本位置一致。
 
 \begin{table}[H]\centering\small
-\caption{关键接口及约束}
+\caption{多机联调中的主要接口}
 \begin{tabularx}{\linewidth}{p{37mm}p{40mm}Y}\toprule
-接口 & 内容 & 使用约束\\\midrule
-\code{/ar_pose_marker} & 带ID与时间戳的标记位姿 & ALVAR标记；尺寸、相机内参和坐标系须一致\\
-\code{target_pose} & 目标在地图中的位姿 & 按观测时刻变换，保留原时间戳\\
-\code{/scan} & 障碍扫描 & 实际可能来自Kinect深度转扫描；检查高度覆盖与时效\\
-\code{map -> odom} & 全局定位变换 & 建图用GMapping；固定地图定位用AMCL，不能同时发布\\
-\code{/competition/mission} & 搬运任务状态 & 需持续更新；开环和最新标记入口不能默认视为已接入\\
-\code{/cmd_vel_mux/input/navi} & 方式二底盘导航速度 & 由独立门控输出；不与键盘遥控争用\\\bottomrule
+接口 & 内容 & 调试时检查的事项\\\midrule
+\code{/ar_pose_marker} & 带ID和时间戳的标记位姿 & 标签类型、实际尺寸、相机内参与坐标系\\
+\code{target_pose} & 转换后的目标位姿 & 目标来源与采样时刻，不能把旧位置当作新位置\\
+\code{/scan} & 障碍扫描 & 有效距离、视野范围、缺测及刷新情况\\
+\code{map -> odom} & 地图定位变换 & 建图与AMCL定位分别使用，避免重复发布\\
+\code{/competition/mission} & 运行阶段 & 抱物、放置、完成和暂停状态的传递\\
+\code{/cmd_vel_mux/input/navi} & 导航速度 & 确认实际控制程序，避免与键盘遥控争用\\
+\code{/mobile_base/commands/velocity} & 方式四底盘速度 & 直接速度接口的停止与控制源检查\\\bottomrule
 \end{tabularx}\end{table}
 
-这些接口共同要求时间、坐标和发布权限一致。消息能够接通只是第一步，还需核对观测采样时刻、TF 链以及最终速度发布者，才能判断系统是否按图示链路运行。
+\subsection{队列关系与通信配置}
+队列中的直接前车和采用的跟随方法是两个问题。方式二可以观察TonyPi的AR标记，也可以接收前车地图位姿；方式四则由首车跟踪TonyPi，后续车辆识别直接前车的标签。每轮试验都应先确定这一关系，再设置目标ID和话题。
 
-
-\subsection{拓扑与跟随方式的区分}
-“TonyPi到首车再到后车”的队列拓扑，与“标记/地图/RGB-D/前车轨迹”的跟随算法是两个维度。当前方式二默认直接观察 TonyPi 背部 AR 标记，再在地图中导航；也支持输入前车地图位姿。实验时应固定一个目标来源并记录，不能把两个适配器同时发布到同一个目标话题。
-
-多机应使用唯一节点名、命名空间与TF名称，并确保时间与地图原点一致。虚拟机 NAT 地址可供宿主机 SSH 访问，不保证机器人能反向访问 ROS；联调需验证共同局域网、\code{ROS_MASTER_URI}与\code{ROS_IP}，报告不收录密码等登录凭据。
-
-\subsection{本轮仓库更新与报告整合范围}
-前一轮于2026年10月19日将代码依据从\code{7bbf588}同步至\code{43a7771}。本轮进一步同步到\code{139c0b7}，纳入第一小组审阅的详写稿、现场图片和视频取帧、第二小组成员与方式一材料，以及方式四C++队列源码、参数及联调说明。\code{v1.pdf}作为第一小组分工与技术展开的参考，不替代其他小组的贡献。现有历史代码快照保留其原提交依据，新方式四结论以当前新包为准。
-
-报告采用“原始投稿保留、总报告按源码核对后归并”的方式：方式一投稿\code{follow1/ar_marker_report.tex}含独立文档类和导言区，不直接嵌套到主文档；其原理、参数、ID切换、门控与现象分析归入第5节，并标明未完成迁移和缺失定量证据。方式二同步更新跨包依赖；附录给出新路径与验证边界。
+多台车需要使用不同的节点名称、命名空间和TF坐标系，同时保持地图原点与时间一致。虚拟机能够通过SSH访问，不代表机器人一定能反向连接ROS；我们还需要检查局域网、\code{ROS_MASTER_URI}和\code{ROS_IP}。联调时应关闭不使用的速度发布程序，保证每台底盘只有一个主要控制源。

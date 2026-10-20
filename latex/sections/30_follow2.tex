@@ -5,19 +5,19 @@
 
 独立ROS功能包\code{multi_robot_following}位于\code{turtlebot/follow2/}，部署到虚拟机\code{~/catkin_ws/src}。包内包括建图入口、AMCL/move\_base配置、目标源适配、轨迹跟随与任务心跳桥。最新拆分将速度门控和AR识别launch移入\code{turtlebot/follow1/ar_marker_following}，并新增\code{turtlebot/follow2/competition_core}共享包。因此方式二不再是仅复制一个目录就能完整启动的自包含包。
 
-\subsection{本次包拆分与接口核对}
-当前\code{follow_map.launch}从\code{ar_marker_following}启动速度门控，\code{vm_follow2.launch}也从该包包含\code{ar_tracker.launch}。需将\code{multi_robot_following}、\code{ar_marker_following}及\code{competition_core}共同放入catkin工作空间，并重新构建和source；不得沿用拆分前单包构建成功的记录作为新结构已验证的证据。
+\subsection{功能包与启动检查}
+地图跟随程序需要同时使用\code{multi_robot_following}、\code{ar_marker_following}和\code{competition_core}。前者负责地图目标与导航，后两者提供识别、速度门控和共用计算。我们在工作空间中统一编译，并在每个终端加载环境后检查话题。
 
-共享核心在历史\code{multi_robot_following/src/competition_core}中仍有副本；新独立包的\code{setup.py}声明安装\code{competition_core}，但文件当前直接位于\code{src/}，未位于其声明通常对应的\code{src/competition_core/}。本次静态检查记录这一目录与安装声明不一致的问题，未在实际catkin环境重建，不能认定独立包已经正确安装。旧源码路径上的单元测试能够通过，也不能排除该安装问题。
+共用Python模块的安装路径也需要核对。程序能够从源码目录导入，并不一定说明catkin安装后的环境已经正确。调试时应检查\code{competition_core}的安装目录及实际导入位置，避免运行到了同名的旧文件。
 
-此外，当前Docker构建上下文只复制方式一与独立核心包，没有复制方式二/三；方式一包没有相应rostest目录。因此CI名称中的“navigation/shadow/loss stop”不能当作这些全部系统已获ROS集成验收的证据。新增依赖、构建步骤和测试范围应分别登记。
+我们把软件检查与实机试验分开安排：先检查程序结构和输入缺失时的停止分支，再连接传感器与底盘，最后进行完整场景测试。这样可以逐步定位问题，但只有实际运行才能反映地图质量和避障效果。
 
 \subsubsection{沿用课程建图链与地图质量检查}
 底盘启动与键盘遥控已由小组确认可用：\code{turtlebot_bringup minimal.launch}及\code{turtlebot_teleop keyboard_teleop.launch}。建图优先沿用课程\code{turtlebot_navigation gmapping_demo.launch}，另用课程导航RViz配置查看地图、扫描和TF。该入口已集成部分相机和导航节点，不与新包的建图入口重复启动。
 
 建图时采集里程计和扫描，通过GMapping估计二维栅格地图；完成后使用\code{map_saver}成对保存\code{.yaml}与\code{.pgm}。比赛导航加载固定地图，AMCL估计当前车位姿，move\_base进行规划。场地障碍布局改变需重新建图；从建图切换到定位时，必须停止GMapping，避免与AMCL竞争\code{map -> odom}。
 
-现场曾报告约35\,cm高障碍未在图中稳定出现。不能只按URDF假定镜头高度便认定扫描必然覆盖：应分别检查原始深度图、深度转扫描的采样行与范围、实际安装俯仰、TF、有效近距，以及RViz中\code{/scan}是否已有对应点。若扫描本身漏检，调节地图膨胀层不能补回未观测障碍；若扫描有点而地图无障碍，再排查建图、TF和清除配置。当前尚未提供漏检已解决的完整实测记录。
+现场曾报告约35\,cm高障碍未在图中稳定出现。不能只按URDF假定镜头高度便认定扫描必然覆盖：应分别检查原始深度图、深度转扫描的采样行与范围、实际安装俯仰、TF、有效近距，以及RViz中\code{/scan}是否已有对应点。若扫描本身漏检，调节地图膨胀层不能补回未观测障碍；若扫描有点而地图无障碍，再排查建图、TF和清除配置。这个漏检问题还需要在相同障碍条件下继续复测。
 视频8\,s处可见多台搭载电脑的 TurtleBot2 和现场标签布置，可用于说明实际平台外观。
 \reportphoto{figures/follow2/robot.jpg}{视频8\,s处的 TurtleBot2 平台与现场布置（V008）}{原始视频截图。}
 图中车辆与方式编号尚无法对应，故本图只作为平台实物记录，不把其中某台车认定为方式二实车，也不据画面推算镜头高度或标记尺寸。
@@ -37,7 +37,7 @@
 \begin{equation}
 p_g=p_j+\frac{r}{\ell_j}(p_{j-1}-p_j).
 \end{equation}
-轨迹不足$d_f$时不生成有效目标。与沿目标当前朝向直接平移相比，这种方法保留已观测路径的转角信息。但move\_base仍会在可通行区域平滑或重规划，不能宣称精确重放前车全部轨迹，也不能保证后车永远不抄近路。
+轨迹不足$d_f$时不生成有效目标。与沿目标当前朝向直接平移相比，这种方法保留已观测路径的转角信息。但move\_base仍会在可通行区域平滑或重规划，后车的实际轨迹可能与前车不同，转角处仍可能出现切角。
 \begin{figure}[H]\centering
 \input{figures/trail_following.tex}
 \caption{沿目标历史折线回退生成导航目标；示意图不含真实场地尺度}
