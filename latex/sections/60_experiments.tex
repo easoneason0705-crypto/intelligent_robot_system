@@ -31,7 +31,7 @@ TurtleBot基础 & 小组确认底盘启动与键盘遥控可用 & 说明基础�
 
 对接触次数、掉落次数、目标丢失持续时间、最长无新帧时间、停止延迟和各车到达时间分别统计。转角是否达到路线要求应通过外部测量或可复核视频判定，不能把“看见下一张码”直接记为精确90度。
 
-\begin{table}[htbp]\centering\small
+\begin{table}[H]\centering\small
 \caption{正式结果汇总模板；破折号表示未测，不表示零}
 \begin{tabularx}{\linewidth}{Yp{26mm}p{26mm}p{25mm}}\toprule
 项目 & 样本数 & 结果 & 证据编号\\\midrule
@@ -44,7 +44,10 @@ TurtleBot基础 & 小组确认底盘启动与键盘遥控可用 & 说明基础�
 全队到达率/总时长 & 待测 & --- & 待填写\\\bottomrule
 \end{tabularx}\end{table}
 
+此表用于统一后续试验的统计口径，当前空缺保持为未测状态。填入结果时应为每次试验绑定版本、参数、日志和视频，失败试次同样保留，以免只报告成功样本而高估系统性能。
+
+
 \subsection{数据归档与照片使用}
 运行记录模板保存在\code{latex/data/experiment_records.csv}。每行对应一次试验，保存代码版本、设备、运行参数、结果及证据路径；原始视频和bag较大时放在团队共享存储中，报告记录可访问的证据位置。不要将不同机器人的动作参数或不同版本的相机设置合并统计。
 
-用户提供的通道、实机窗口及TurtleBot照片可作为场地和调试过程说明；应将原图归档到\code{figures/site}、\code{figures/humanoid}和\code{figures/follow2}并注明出处。当前源码支持图片尚未归档时显示明确占位框；占位框不是实验结果。终稿应补齐实际引用照片或移除相应图位。
+用户提供的通道、实机窗口及TurtleBot照片可作为场地和调试过程说明；应将原图归档到\code{figures/site}、\code{figures/humanoid}和\code{figures/follow2}并注明出处。本次已归档赛道原图及比赛视频原始帧，替换人形调试窗口和底盘实物图位；来源与时间戳见下一节。截图不代替连续运行记录。
