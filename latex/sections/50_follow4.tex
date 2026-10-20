@@ -1,4 +1,4 @@
-\section{方式四：TurtleBot2视觉跟随与队列行驶}
+\section{方式四：TurtleBot2视觉跟随与队列行驶（第10组）}
 \subsection{方案与队列关系}
 竞赛要求TurtleBot2自主跟随目标机器人，跟随过程中不得碰撞障碍物或其他机器人，也不得丢失目标。方式四小组提交的方案使用三台TurtleBot2纵列跟随：一号车以点云视觉跟踪TonyPi，二号车跟随一号车，三号车跟随二号车。二、三号车通过Kinect识别前车背部的AR码标签，按标签相对位置控制底盘；深度图转换得到的扫描数据用于近距离障碍响应。该队列方案不使用地图定位和全局路径规划。
 
@@ -110,7 +110,7 @@ roslaunch team_turtlebot_follow_plus follow_ar.launch \
 
 \subsection{小组分工}
 \noindent\begin{minipage}{\linewidth}\centering\small
-\captionof{table}{方式四小组分工}\label{tab:f4-division}
+\captionof{table}{第10组成员与方式四分工}\label{tab:f4-division}
 \vspace{-3pt}\renewcommand{\arraystretch}{1.05}\setlength{\tabcolsep}{4pt}
 \begin{tabularx}{\linewidth}{p{27mm}p{42mm}Y}\toprule
 姓名/学号 & 工作内容 & 交付记录\\\midrule

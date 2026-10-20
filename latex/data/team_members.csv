@@ -1,0 +1,17 @@
+group,name,student_id,identity_source,individual_responsibility_status
+1,杨开元,24345063,user_confirmed_20261020,reference_v1
+1,林楗棋,24363050,user_confirmed_20261020,reference_v1
+1,曹淇涵,24363003,user_confirmed_20261020,reference_v1
+1,刘小凡,24363059,user_confirmed_20261020,reference_v1
+2,陈凯华,,repository_submission,repository_submission
+2,罗忞,,repository_submission,repository_submission
+2,刘彦廷,,repository_submission,repository_submission
+2,许程奕,,repository_submission,repository_submission
+3,何奇涛,24363027,user_confirmed_20261020,pending_confirmation
+3,林子昂,24363052,user_confirmed_20261020,pending_confirmation
+3,李雨翰,24363043,user_confirmed_20261020,pending_confirmation
+3,陈韦诺,24363158,user_confirmed_20261020,pending_confirmation
+10,徐杰鸿,24363164,user_confirmed_20261020,repository_submission
+10,王振宇,24363096,user_confirmed_20261020,repository_submission
+10,林琢严,24363054,user_confirmed_20261020,repository_submission
+10,何爽,24363028,user_confirmed_20261020,repository_submission
