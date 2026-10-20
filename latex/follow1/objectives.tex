@@ -1,0 +1,8 @@
+\section{实验目的}
+本实验面向智能机器人多机协同任务，综合使用 Turtlebot2、Kinect RGB-D 相机、ROS Kinetic、\texttt{ar\_track\_alvar} 与速度门控节点，实现后车对前车背贴 AR 标记的实时跟随。实验目标如下：
+\begin{enumerate}
+	\item 掌握 AR 标记识别节点的启动方法，理解标记 ID、实际尺寸和相机话题对识别结果的影响。
+	\item 设计基于 AR 标记相对位姿的实时跟随控制方法，使后车能够保持目标距离并对准前车。
+	\item 结合 GitHub 仓库中的 \texttt{multi\_robot\_following} 结构，理解标记观测、控制输出、任务状态和避障门控之间的关系。
+	\item 掌握通过 \texttt{target\_id} 或 \texttt{marker\_id} 切换跟随目标的方法，为多台 Turtlebot2 队列跟随提供参数配置依据。
+\end{enumerate}

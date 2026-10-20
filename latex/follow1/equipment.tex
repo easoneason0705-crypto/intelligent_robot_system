@@ -1,0 +1,20 @@
+\section{实验仪器、设备及材料}
+实验设备与软件环境如表~\ref{tab:devices} 所示。
+
+\begin{table}[H]
+	\centering
+	\caption{实验设备与软件环境}
+	\label{tab:devices}
+	\begin{tabular}{ll}
+		\toprule
+		类别 & 内容 \\
+		\midrule
+		移动平台 & Turtlebot2 Kobuki 底盘，前车可为 TonyPi 或另一台 Turtlebot2 \\
+		视觉传感器 & Kinect RGB-D 相机，使用 RGB 图像和相机内参识别 AR 标记 \\
+		测距传感器 & 激光雷达或深度转换的 \texttt{/scan} 话题，用于前方避障 \\
+		软件环境 & Ubuntu 16.04，ROS Kinetic，Python 2.7 \\
+		ROS 包 & \texttt{ar\_track\_alvar}、\texttt{ar\_marker\_following}、\texttt{competition\_core}、\texttt{turtlebot\_bringup} \\
+		实验材料 & ALVAR AR 标签，建议边长 \SI{9}{cm} 至 \SI{14}{cm}，按实际打印尺寸设置参数 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
