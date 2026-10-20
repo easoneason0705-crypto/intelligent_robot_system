@@ -2,12 +2,12 @@
 \documentclass[UTF8,a4paper,zihao=-4,fontset=none]{ctexart}
 \setCJKmainfont[Path=fonts/,BoldFont=FandolSong-Bold.otf,ItalicFont=FandolKai-Regular.otf]{FandolSong-Regular.otf}
 \setCJKsansfont[Path=fonts/,BoldFont=FandolHei-Bold.otf]{FandolHei-Regular.otf}
-\setCJKmonofont[Path=fonts/]{FandolFang-Regular.otf}
+\setCJKmonofont[Path=fonts/,ItalicFont=FandolFang-Regular.otf]{FandolFang-Regular.otf}
 \input{preamble}
 \input{metadata}
 \begin{document}
 \hypersetup{pageanchor=false}
-\input{cover}
+\input{cover_collective}
 \pagenumbering{Roman}
 \hypersetup{pageanchor=true}
 \input{sections/00_abstract}
@@ -33,6 +33,7 @@
 \input{sections/50_follow4}
 \input{sections/60_experiments}
 \input{sections/61_video_evidence}
+\input{sections/62_collective_results}
 \input{sections/70_conclusion}
 \input{sections/80_references}
 \appendix

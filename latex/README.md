@@ -1,13 +1,13 @@
 # 智能机器人实验报告（LaTeX 协作目录）
 
-入口为 **main.tex**，编译器使用 **XeLaTeX**。本次更新为第五大组第一小组审阅后的报告；第一小组负责 **TonyPi 人形机器人与方式二建图避障跟随**。封面记录杨开元、林楗棋、曹淇涵、刘小凡的主要分工，分工正文采用常规字重，第2章保留详细协作说明。
+入口为 **main.tex**，编译器使用 **XeLaTeX**。本报告为**第五大组共同实验报告**，覆盖 TonyPi 与方式一至四，不是第一小组单独报告。第一小组杨开元、林楗棋、曹淇涵、刘小凡的职责参考用户提供的 `v1.pdf`；第二小组与方式四成员沿用其已提交材料，第三小组名单待补。详细个人贡献统一放第2章，封面采用全队名单摘要。
 
 ## 查看与编译
 
-- [已编译报告](report-draft.pdf)：80页，含实景照片、比赛视频截图、状态机和源码分析图。
-- [主文件](main.tex)、[封面](cover.tex)、[公共样式](preamble.tex)、[封面信息](metadata.tex)。
+- [已编译共同报告](report-draft.pdf)：含实景照片、比赛视频截图、各组技术、共同协调及验收矩阵；编译页数见 `VALIDATION.md` 当前记录。
+- [主文件](main.tex)、[共同报告封面](cover_collective.tex)、[公共样式](preamble.tex)、[封面信息](metadata.tex)。旧 `cover.tex` 保留为第一小组历史封面，不被主文件引用。
 - 将完整 latex 目录上传到 Overleaf，主文件选 main.tex，编译器选 XeLaTeX。fonts/ 随附中文字体，figures/ 提供图形。
-- 本地运行 build.cmd，或执行 `latexmk -xelatex -interaction=nonstopmode -halt-on-error main.tex`。至少编译两次更新目录及交叉引用。
+- 本地运行 `build.cmd`，或执行 `latexmk -xelatex -interaction=nonstopmode -halt-on-error -outdir=build main.tex`。脚本编译后同步 `main.pdf` 和 `report-draft.pdf`，避免两个预览版本不一致。
 - 不提交 build/、编译辅助文件、缓存、完整视频及 bag。
 
 ## 各组编辑位置
@@ -19,11 +19,14 @@
 | 方式一 | sections/20_follow1.tex | figures/follow1/；原有独立稿 follow1/ar_marker_report.tex 保留 |
 | 方式三 | sections/40_follow3.tex | figures/follow3/ |
 | 方式四 | sections/50_follow4.tex | figures/follow4/ |
-| 组内协作 | sections/02_division.tex；封面摘要在 cover.tex | 无 |
-| 实验与视频证据 | sections/60_experiments.tex、61_video_evidence.tex | figures/site/、figures/video/ |
+| 大组与组内分工 | sections/02_division.tex；全队封面摘要在 cover_collective.tex | 无 |
+| 全队方案与接口 | sections/03_collective_coordination.tex、03_architecture.tex | figures/collective_system.tex |
+| 实验、视频与共同验收 | sections/60_experiments.tex、61_video_evidence.tex、62_collective_results.tex | figures/site/、figures/video/ |
 | 引用与实现依据 | sections/80_references.tex、90_reproduction.tex、91_code_analysis.tex、92_parameter_snapshot.tex | data/、code_snapshot/、code_snapshot_current/ |
 
 各组独立维护对应章节和图形；公共入口、样式和跨模块接口协商调整。不要用某位贡献者在仓库 README 中的“我们组”推断全队组号，也不要将视频画面顺序自动等同于方式编号。
+
+本轮以远端 `139c0b7` 为整合基线。方式四最新实现是 `team_turtlebot_follow_plus` C++/AR三车队列，不是早期地图位姿适配器。方式四投稿中的三车子场景不能自动替代全队四种方式联合验收；其点云首车也不能直接认定运行了方式三完整包。历史源码分析与图表仍保留并注明来源，人员职责不作无依据扩展。`v1.pdf` 是本地参考原件，未改动；本次未重复提交该PDF。
 
 ## 图形与证据
 

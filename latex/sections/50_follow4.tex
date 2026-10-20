@@ -1,6 +1,8 @@
 \section{方式四：TurtleBot2视觉跟随与队列行驶}
 \subsection{方案与队列关系}
-竞赛要求TurtleBot2自主跟随目标机器人，跟随过程中不得碰撞障碍物或其他机器人，也不得丢失目标。本组使用三台TurtleBot2纵列跟随：一号车以点云视觉跟踪TonyPi，二号车跟随一号车，三号车跟随二号车。二、三号车通过Kinect识别前车背部的AR码标签，按标签相对位置控制底盘；深度图转换得到的扫描数据用于近距离障碍响应。该队列方案不使用地图定位和全局路径规划。
+竞赛要求TurtleBot2自主跟随目标机器人，跟随过程中不得碰撞障碍物或其他机器人，也不得丢失目标。方式四小组提交的方案使用三台TurtleBot2纵列跟随：一号车以点云视觉跟踪TonyPi，二号车跟随一号车，三号车跟随二号车。二、三号车通过Kinect识别前车背部的AR码标签，按标签相对位置控制底盘；深度图转换得到的扫描数据用于近距离障碍响应。该队列方案不使用地图定位和全局路径规划。
+
+本章以最新\code{team_turtlebot_follow_plus}源码和该组投稿为依据，取代早期仅讨论前车AMCL位姿回放的方式四摘要。历史地图位姿适配器仍作为仓库可选方案保留，但不是该组三车试验的运行控制器；附录中的历史地图算法分析也不能用作本次C++队列已验收的证据。
 
 一号车和二号车尾部分别粘贴ID 0和ID 1标签，三号车尾部未贴标签。二号车识别一号车的ID 0标签，三号车识别二号车的ID 1标签。一号车通过点云数据识别并跟踪TonyPi，不使用AR标签。以下功能包和启动参数说明适用于二、三号车。
 
@@ -89,7 +91,7 @@ roslaunch team_turtlebot_follow_plus follow_ar.launch \
   marker_timeout:=0.8 lost_search_timeout:=16 search_angular_speed:=0.20
 \end{lstlisting}
 \subsection{实验记录}
-三车联调结果汇总见表\ref{tab:f4-results}。本次测试未专门布置障碍物。
+该组投稿的三车联调结果汇总见表\ref{tab:f4-results}，本次整合未重新运行真机。投稿明确未专门布置障碍物，未提供多轮样本数，故表内“完成”为该次定性记录，不能换算为成功率或全队四方式验收。
 
 \noindent\begin{minipage}{\linewidth}\centering\small
 \captionof{table}{方式四实验记录}\label{tab:f4-results}

@@ -1,0 +1,12 @@
+\begin{tikzpicture}[node distance=7mm and 7mm]
+\node[block,text width=113mm] (leader) {TonyPi：抱物、A/B/C标记路线、左/右转与放置\\为后车提供移动目标；任务状态接口按实现分别核对};
+\node[block,text width=52mm,below left=9mm and -53mm of leader] (one) {方式一：背贴AR直接跟随\\相对位姿、比例控制、门控};
+\node[block,text width=52mm,right=of one] (two) {方式二：地图导航跟随\\GMapping、AMCL、轨迹回退};
+\node[block,text width=52mm,below=of one] (three) {方式三：实时RGB-D\\身份关联、滚动地图与规划};
+\node[block,text width=52mm,right=of three] (four) {方式四：三车纵列\\点云首车，AR ID0/1后车};
+\draw[flow] (leader.south)-|(one.north);
+\draw[flow] (leader.south)-|(two.north);
+\draw[flow] (leader.west)--++(-5mm,0)|-(three.west);
+\draw[flow] (leader.east)--++(5mm,0)|-(four.east);
+\node[note,below=6mm of three.south east,anchor=north,text width=110mm,xshift=4mm] {连线表示方案关联，不表示同一控制器或同一已验收部署；\\方式四队列为TonyPi → 点云首车 → ID0后车 → ID1末车。};
+\end{tikzpicture}

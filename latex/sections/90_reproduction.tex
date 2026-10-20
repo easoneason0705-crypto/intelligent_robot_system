@@ -12,6 +12,7 @@ AR控制与共享门控 & \code{turtlebot/follow1/ar_marker_following/scripts/ma
 轨迹与几何核心 & 新独立包\code{turtlebot/follow2/competition_core/src/planning.py}；旧包仍保留\code{src/competition_core/planning.py}，安装布局待核对\\
 导航默认参数 & 该包\code{config/move_base.yaml}及\code{costmap_common.yaml}\\\bottomrule
 \end{longtable}
+方式三入口为\code{turtlebot/follow3/rgbd_following}；方式四当前运行实现为\code{turtlebot/follow4/team_turtlebot_follow_plus}，含C++控制节点和\code{follow_ar.launch}。方式四历史README中的地图位姿模式属于可选旧方案，不作为最新三车子系统的复现入口。
 
 \subsection{只查看最新标记检测}
 在具备相机、标定文件及显示环境的TonyPi上，从完整仓库运行：
