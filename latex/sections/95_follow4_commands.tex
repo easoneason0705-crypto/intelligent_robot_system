@@ -1,0 +1,45 @@
+\section{AR队列跟随的完整启动命令}\label{app:queue-commands}
+
+将功能包放入\code{~/catkin\_ws/src/}后编译：
+\begin{lstlisting}[language=bash]
+source /opt/ros/kinetic/setup.bash
+cd ~/catkin_ws
+catkin_make
+source devel/setup.bash
+\end{lstlisting}
+后车分终端启动底盘、Kinect和深度扫描转换：
+\begin{lstlisting}[language=bash]
+# TurtleBot2底盘
+source /opt/ros/kinetic/setup.bash
+source ~/catkin_ws/devel/setup.bash
+roslaunch turtlebot_bringup minimal.launch
+
+# Kinect
+source /opt/ros/kinetic/setup.bash
+source ~/catkin_ws/devel/setup.bash
+roslaunch openni_launch openni.launch
+
+# 深度图转换为 /scan
+source /opt/ros/kinetic/setup.bash
+rosrun depthimage_to_laserscan depthimage_to_laserscan \
+  image:=/camera/depth/image_raw \
+  camera_info:=/camera/depth/camera_info
+\end{lstlisting}
+确认\code{/scan}持续更新后，二号和三号车分别使用下列参数启动跟随节点：
+\begin{lstlisting}[language=bash]
+# 二号车跟随一号车（标签ID 0）
+roslaunch team_turtlebot_follow_plus follow_ar.launch \
+  marker_id:=0 marker_size:=14.0 desired_distance:=0.40 \
+  max_linear_speed:=0.35 max_angular_speed:=0.25 \
+  avoid_distance:=0.38 stop_distance:=0.20 side_clearance:=0.40 \
+  avoid_release_margin:=0.20 obstacle_turn_speed:=0.20 \
+  marker_timeout:=0.8 lost_search_timeout:=16 search_angular_speed:=0.20
+
+# 三号车跟随二号车（标签ID 1）
+roslaunch team_turtlebot_follow_plus follow_ar.launch \
+  marker_id:=1 marker_size:=14.0 desired_distance:=0.40 \
+  max_linear_speed:=0.35 max_angular_speed:=0.25 \
+  avoid_distance:=0.38 stop_distance:=0.20 side_clearance:=0.40 \
+  avoid_release_margin:=0.20 obstacle_turn_speed:=0.20 \
+  marker_timeout:=0.8 lost_search_timeout:=16 search_angular_speed:=0.20
+\end{lstlisting}

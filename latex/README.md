@@ -1,6 +1,6 @@
 # 智能机器人实验报告（LaTeX 协作目录）
 
-入口为 **main.tex**，编译器使用 **XeLaTeX**。本报告为**第五大组共同实验报告**，覆盖 TonyPi 与方式一至四，不是第一小组单独报告。第1、2、3、10组姓名及学号已补齐；方式四责任小组确认为第10组。第1组职责参考 `v1.pdf`，第2组和第10组分工沿用已提交材料，各组个人任务按相近工作量安排，突出共同调试和协作。详细个人贡献统一放第2章，封面采用全队名单摘要。
+入口为 **main.tex**，编译器使用 **XeLaTeX**。本报告为**第5大组共同实验报告**，覆盖 TonyPi 与方式一至四，不是第1组单独报告。第1、2、3、10组姓名及学号已补齐；方式四责任小组确认为第10组。第1组职责参考 `v1.pdf`，第2组和第10组分工沿用已提交材料，各组个人任务按相近工作量安排，突出共同调试和协作。详细个人贡献统一放第2章，封面采用全队名单摘要。
 
 ## 已确认成员
 
@@ -16,20 +16,24 @@
 ## 查看与编译
 
 - [已编译共同报告](report-draft.pdf)：含实景照片、比赛视频截图、各组技术、共同协调及验收矩阵；编译页数见 `VALIDATION.md` 当前记录。
-- [主文件](main.tex)、[共同报告封面](cover_collective.tex)、[公共样式](preamble.tex)、[封面信息](metadata.tex)。旧 `cover.tex` 保留为第一小组历史封面，不被主文件引用。
+- [主文件](main.tex)、[共同报告封面](cover_collective.tex)、[公共样式](preamble.tex)、[封面信息](metadata.tex)。旧 `cover.tex` 保留为第1组历史封面，不被主文件引用。
 - 将完整 latex 目录上传到 Overleaf，主文件选 main.tex，编译器选 XeLaTeX。fonts/ 随附中文字体，figures/ 提供图形。
 - 本地运行 `build.cmd`，或执行 `latexmk -xelatex -interaction=nonstopmode -halt-on-error -outdir=build main.tex`。脚本编译后同步 `main.pdf` 和 `report-draft.pdf`，避免两个预览版本不一致。
 - 不提交 build/、编译辅助文件、缓存、完整视频及 bag。
+
+## 章节结构约定
+
+组号统一使用阿拉伯数字：第1组、第2组、第3组、第10组，大组写作第5大组。人形机器人与四种跟随方式在正文均按六个二级小节编排：实验目标与总体方案、感知输入与目标定位、运动决策与控制方法、运行流程与参数设置、实验现象与结果分析、小组协作与改进总结。目录对五个章节采用相同深度。较长的状态机分析、算法推导与完整命令放入附录，保留各组已有内容；各章结果仍以实际记录为准。
 
 ## 各组编辑位置
 
 | 内容 | 源文件 | 图形目录 |
 |---|---|---|
-| 第一小组：TonyPi | sections/10_humanoid.tex、11_humanoid_analysis.tex、12_humanoid_contracts.tex | figures/humanoid/；状态机见 figures/*.tex |
-| 第一小组：方式二 | sections/30_follow2.tex、31_follow2_analysis.tex、32_follow2_contracts.tex | figures/follow2/、figures/analysis/、figures/enriched/ |
+| 第1组：TonyPi | sections/10_humanoid.tex（正文）；11_humanoid_analysis.tex、12_humanoid_contracts.tex（附录D） | figures/humanoid/；状态机见 figures/*.tex |
+| 第1组：方式二 | sections/30_follow2.tex（正文）；31_follow2_analysis.tex、32_follow2_contracts.tex（附录E） | figures/follow2/、figures/analysis/、figures/enriched/ |
 | 方式一 | sections/20_follow1.tex | figures/follow1/；原有独立稿 follow1/ar_marker_report.tex 保留 |
 | 方式三 | sections/40_follow3.tex | figures/follow3/ |
-| 方式四 | sections/50_follow4.tex | figures/follow4/ |
+| 方式四 | sections/50_follow4.tex；95_follow4_commands.tex（附录F） | figures/follow4/ |
 | 大组与组内分工 | sections/02_division.tex；全队封面摘要在 cover_collective.tex | 无 |
 | 全队方案与接口 | sections/03_collective_coordination.tex、03_architecture.tex | figures/collective_system.tex |
 | 实验、视频与共同验收 | sections/60_experiments.tex、61_video_evidence.tex、62_collective_results.tex | figures/site/、figures/video/ |
