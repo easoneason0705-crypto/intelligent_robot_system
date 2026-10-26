@@ -15,7 +15,7 @@
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
 \pagestyle{fancy}\fancyhf{}
 \fancyhead[L]{\small 多机协同控制实验报告}
-\fancyhead[R]{\small 技术详写稿}
+\fancyhead[R]{\small 第5大组共同报告}
 \fancyfoot[C]{\thepage}
 \captionsetup{font=small,labelfont=bf}
 \lstset{basicstyle=\ttfamily\small,breaklines=true,columns=fullflexible,
@@ -23,6 +23,9 @@
  backgroundcolor=\color{black!2},aboveskip=8pt,belowskip=8pt}
 \newcommand{\code}[1]{\nolinkurl{#1}}
 \newcommand{\pending}[1]{\textcolor{BrickRed}{\textbf{待补充：}#1}}
+% 随附开源字体的单字子集，补齐Fandol未覆盖的成员姓名用字。
+\newCJKfontfamily\RareGlyph[Path=fonts/]{ReportRareGlyph.otf}
+\newcommand{\LuoMin}{罗{\RareGlyph 忞}}
 % 图片可晚于正文提交；缺图时明确标为占位，不伪装成现场证据。
 \newcommand{\reportphoto}[3]{%
  \begin{figure}[H]\centering

@@ -1,12 +1,18 @@
-\section{方式四：TurtleBot2视觉跟随与队列行驶}
-\subsection{方案与队列关系}
-竞赛要求TurtleBot2自主跟随目标机器人，跟随过程中不得碰撞障碍物或其他机器人，也不得丢失目标。本组使用三台TurtleBot2纵列跟随：一号车以点云视觉跟踪TonyPi，二号车跟随一号车，三号车跟随二号车。二、三号车通过Kinect识别前车背部的AR码标签，按标签相对位置控制底盘；深度图转换得到的扫描数据用于近距离障碍响应。该队列方案不使用地图定位和全局路径规划。
+\section{方式四：AR标记识别与队列跟随（第10组）}
+\subsection{实验目标与总体方案}
+本组使用三台TurtleBot2纵列跟随：一号车以点云视觉跟踪TonyPi，二号车跟随一号车，三号车跟随二号车。二、三号车通过Kinect识别前车背部AR标签，根据相对位置控制底盘；深度图转换得到的扫描用于近障响应。该方案不使用预建地图和全局路径规划。
+
+二、三号车使用\code{team_turtlebot_follow_plus}中的C++节点。它们直接根据标签和扫描产生速度，区别于通过前车AMCL位姿和地图规划进行跟随的方案。
 
 一号车和二号车尾部分别粘贴ID 0和ID 1标签，三号车尾部未贴标签。二号车识别一号车的ID 0标签，三号车识别二号车的ID 1标签。一号车通过点云数据识别并跟踪TonyPi，不使用AR标签。以下功能包和启动参数说明适用于二、三号车。
 
-\subsection{系统组成与控制方法}
+\subsection{感知输入与目标定位}
 功能包\code{team\_turtlebot\_follow\_plus}使用ROS Kinetic/C++实现，位于\code{turtlebot/follow4/team\_turtlebot\_follow\_plus/}。\code{ar\_track\_alvar}根据Kinect RGB图像和相机内参发布标签位姿；\code{depthimage\_to\_laserscan}将深度图转换为\code{/scan}。跟随节点订阅\code{/ar\_pose\_marker}与\code{/scan}，向\code{/mobile\_base/commands/velocity}发布速度指令。
 
+
+相机输入、内参和标签尺寸应成套核对。二、三号车分别只选择ID 0和ID 1；其他标签即使进入画面，也不应改变直接前车的身份。深度扫描负责近障判断，标签位姿负责跟随方向，两种观测承担不同任务。
+
+\subsection{运动决策与控制方法}
 设相机光学坐标系中的标签位置为$(x,z)$，其中$x$向图像右侧为正、$z$指向相机前方，则标签距离与方位角为
 \begin{equation}
  r=\sqrt{x^2+z^2},\qquad \theta=\operatorname{atan2}(x,z).
@@ -15,7 +21,7 @@
 
 避障逻辑将扫描数据划分为前方及左右侧扇区。前方出现近障时，节点选择有足够扫描净空的一侧并保持该转向选择；距离达到停车阈值或所选侧净空不足时停止前进。扫描数据超时则发布零速度。目标首次出现前车辆保持停止；已识别目标丢失后，车辆低速原地搜索，超过设定时限仍未重获目标则停止。该方法依赖标签保持在相机视野内，不能沿被遮挡路线推断前车位置。
 
-\subsection{参数设置及含义}
+\subsection{运行流程与参数设置}
 二、三号车使用相同的跟随和避障参数，目标标签ID分别设为0和1。表\ref{tab:f4-param-meaning}列出实际启动值及参数用途。
 
 {\small\renewcommand{\arraystretch}{1.05}\setlength{\tabcolsep}{3pt}
@@ -44,52 +50,11 @@
 \bottomrule
 \end{longtable}}
 
-\subsection{执行流程与运行参数}
-将功能包放入\code{~/catkin\_ws/src/}后编译：
-\begin{lstlisting}[language=bash]
-source /opt/ros/kinetic/setup.bash
-cd ~/catkin_ws
-catkin_make
-source devel/setup.bash
-\end{lstlisting}
-后车分终端启动底盘、Kinect和深度扫描转换：
-\begin{lstlisting}[language=bash]
-# TurtleBot2底盘
-source /opt/ros/kinetic/setup.bash
-source ~/catkin_ws/devel/setup.bash
-roslaunch turtlebot_bringup minimal.launch
 
-# Kinect
-source /opt/ros/kinetic/setup.bash
-source ~/catkin_ws/devel/setup.bash
-roslaunch openni_launch openni.launch
+运行时先编译并加载工作空间，再分终端启动底盘、Kinect和深度转扫描节点；确认扫描连续更新后，分别以ID 0和ID 1启动二、三号车。初次测试先以0.05--0.10\,m/s观察响应，再结合场地调整；表中的0.35\,m/s是启动配置的速度上限。完整命令见附录\ref{app:queue-commands}，便于调试时查阅。
 
-# 深度图转换为 /scan
-source /opt/ros/kinetic/setup.bash
-rosrun depthimage_to_laserscan depthimage_to_laserscan \
-  image:=/camera/depth/image_raw \
-  camera_info:=/camera/depth/camera_info
-\end{lstlisting}
-确认\code{/scan}持续更新后，二号和三号车分别使用下列参数启动跟随节点：
-\begin{lstlisting}[language=bash]
-# 二号车跟随一号车（标签ID 0）
-roslaunch team_turtlebot_follow_plus follow_ar.launch \
-  marker_id:=0 marker_size:=14.0 desired_distance:=0.40 \
-  max_linear_speed:=0.35 max_angular_speed:=0.25 \
-  avoid_distance:=0.38 stop_distance:=0.20 side_clearance:=0.40 \
-  avoid_release_margin:=0.20 obstacle_turn_speed:=0.20 \
-  marker_timeout:=0.8 lost_search_timeout:=16 search_angular_speed:=0.20
-
-# 三号车跟随二号车（标签ID 1）
-roslaunch team_turtlebot_follow_plus follow_ar.launch \
-  marker_id:=1 marker_size:=14.0 desired_distance:=0.40 \
-  max_linear_speed:=0.35 max_angular_speed:=0.25 \
-  avoid_distance:=0.38 stop_distance:=0.20 side_clearance:=0.40 \
-  avoid_release_margin:=0.20 obstacle_turn_speed:=0.20 \
-  marker_timeout:=0.8 lost_search_timeout:=16 search_angular_speed:=0.20
-\end{lstlisting}
-\subsection{实验记录}
-三车联调结果汇总见表\ref{tab:f4-results}。本次测试未专门布置障碍物。
+\subsection{实验现象与结果分析}
+三车联调结果见表\ref{tab:f4-results}。本次完成了直行、转弯和依次停车，没有专门布置障碍物，也没有出现目标丢失，因此避障与重捕获还需要增加相应场景测试。
 
 \noindent\begin{minipage}{\linewidth}\centering\small
 \captionof{table}{方式四实验记录}\label{tab:f4-results}
@@ -106,18 +71,10 @@ roslaunch team_turtlebot_follow_plus follow_ar.launch \
 
 赛道围栏未发生碰撞，但当前车低速行驶时，后车曾把围栏识别为障碍并触发避障；当前车长时间停留在近处时，后车也曾将其判断为障碍，继而原地转向。后续需结合赛道宽度和前后车间距调整避障距离及状态切换条件，并在围栏邻近、前车慢行和停车场景下复测。测试期间目标未丢失，目标重捕获功能尚无实际触发记录。
 
-\subsection{小组分工}
-\noindent\begin{minipage}{\linewidth}\centering\small
-\captionof{table}{方式四小组分工}\label{tab:f4-division}
-\vspace{-3pt}\renewcommand{\arraystretch}{1.05}\setlength{\tabcolsep}{4pt}
-\begin{tabularx}{\linewidth}{p{27mm}p{42mm}Y}\toprule
-姓名/学号 & 工作内容 & 交付记录\\\midrule
-徐杰鸿24363164 & 动态跟踪程序编写、避障功能优化及参数调试、跟随控制与障碍测试、报告整理 & 实地测试、参数调优及结果记录\\
-王振宇24363096 & 标签配置与安装，建立标签与车辆的对应关系，完成标签识别验证 & 标签ID清单、安装位置及车辆对应关系记录、识别测试结果\\
-林琢严24363054 & 辅助代码优化、场地布置 & 标签ID清单、安装位置及对应关系记录\\
-何爽24363028 & 辅助代码优化、场地布置 & 实验结果记录\\
-\bottomrule\end{tabularx}
-\end{minipage}
+\subsection{小组协作与改进总结}
+徐杰鸿负责跟随程序与参数，王振宇负责标签和车辆配置，林琢严配合控制优化与场地布置，何爽负责障碍场景、运行记录和报告。我们共同完成三车联调，遇到围栏和停车前车引起的误避障时，一起观察扫描和车辆位置再调整参数。详细分工见第\ref{sec:division}节。
 
-\subsection{小结}
+
+
+
 本组以点云视觉跟踪和AR码标签跟随组成三车队列：一号车跟踪TonyPi，二号车识别ID 0，三号车识别ID 1；标签边长为14\,cm。联调中三车完成直行、圆弧转弯和依次停车，车辆未发生碰撞或目标丢失。围栏和慢行前车引发的误避障仍需通过参数调整和复测处理；本次未进行专门障碍布置，不能据此判定复杂障碍下的避障性能。

@@ -1,29 +1,47 @@
 # 智能机器人实验报告（LaTeX 协作目录）
 
-入口为 **main.tex**，编译器使用 **XeLaTeX**。本次更新为第五大组第一小组审阅后的报告；第一小组负责 **TonyPi 人形机器人与方式二建图避障跟随**。封面记录杨开元、林楗棋、曹淇涵、刘小凡的主要分工，分工正文采用常规字重，第2章保留详细协作说明。
+入口为 **main.tex**，编译器使用 **XeLaTeX**。本报告为**第5大组共同实验报告**，覆盖 TonyPi 与方式一至四，不是第1组单独报告。第1、2、3、10组姓名及学号已补齐；方式四责任小组确认为第10组。第1组职责参考 `v1.pdf`，第2组和第10组分工沿用已提交材料，各组个人任务按相近工作量安排，突出共同调试和协作。详细个人贡献统一放第2章，封面采用全队名单摘要。
+
+## 已确认成员
+
+| 小组 | 姓名与学号 |
+|---|---|
+| 第1组 | 杨开元24345063、林楗棋24363050、曹淇涵24363003、刘小凡24363059 |
+| 第2组 | 陈凯华24363156、刘彦廷24363060、罗忞24363064、许程奕24363107 |
+| 第3组 | 何奇涛24363027、林子昂24363052、李雨翰24363043、陈韦诺24363158 |
+| 第10组（方式四） | 徐杰鸿24363164、王振宇24363096、林琢严24363054、何爽24363028 |
+
+第2组：陈凯华24363156、刘彦廷24363060、罗忞24363064、许程奕24363107。`data/team_members.csv` 提供当前身份登记表，后续修改需同时核对封面、第2章及对应方式章节。
 
 ## 查看与编译
 
-- [已编译报告](report-draft.pdf)：80页，含实景照片、比赛视频截图、状态机和源码分析图。
-- [主文件](main.tex)、[封面](cover.tex)、[公共样式](preamble.tex)、[封面信息](metadata.tex)。
+- [已编译共同报告](report-draft.pdf)：含实景照片、比赛视频截图、各组技术、共同协调及验收矩阵；编译页数见 `VALIDATION.md` 当前记录。
+- [主文件](main.tex)、[共同报告封面](cover_collective.tex)、[公共样式](preamble.tex)、[封面信息](metadata.tex)。旧 `cover.tex` 保留为第1组历史封面，不被主文件引用。
 - 将完整 latex 目录上传到 Overleaf，主文件选 main.tex，编译器选 XeLaTeX。fonts/ 随附中文字体，figures/ 提供图形。
-- 本地运行 build.cmd，或执行 `latexmk -xelatex -interaction=nonstopmode -halt-on-error main.tex`。至少编译两次更新目录及交叉引用。
+- 本地运行 `build.cmd`，或执行 `latexmk -xelatex -interaction=nonstopmode -halt-on-error -outdir=build main.tex`。脚本编译后同步 `main.pdf` 和 `report-draft.pdf`，避免两个预览版本不一致。
 - 不提交 build/、编译辅助文件、缓存、完整视频及 bag。
+
+## 章节结构约定
+
+组号统一使用阿拉伯数字：第1组、第2组、第3组、第10组，大组写作第5大组。人形机器人与四种跟随方式在正文均按六个二级小节编排：实验目标与总体方案、感知输入与目标定位、运动决策与控制方法、运行流程与参数设置、实验现象与结果分析、小组协作与改进总结。目录对五个章节采用相同深度。较长的状态机分析、算法推导与完整命令放入附录，保留各组已有内容；各章结果仍以实际记录为准。
 
 ## 各组编辑位置
 
 | 内容 | 源文件 | 图形目录 |
 |---|---|---|
-| 第一小组：TonyPi | sections/10_humanoid.tex、11_humanoid_analysis.tex、12_humanoid_contracts.tex | figures/humanoid/；状态机见 figures/*.tex |
-| 第一小组：方式二 | sections/30_follow2.tex、31_follow2_analysis.tex、32_follow2_contracts.tex | figures/follow2/、figures/analysis/、figures/enriched/ |
+| 第1组：TonyPi | sections/10_humanoid.tex（正文）；11_humanoid_analysis.tex、12_humanoid_contracts.tex（附录D） | figures/humanoid/；状态机见 figures/*.tex |
+| 第1组：方式二 | sections/30_follow2.tex（正文）；31_follow2_analysis.tex、32_follow2_contracts.tex（附录E） | figures/follow2/、figures/analysis/、figures/enriched/ |
 | 方式一 | sections/20_follow1.tex | figures/follow1/；原有独立稿 follow1/ar_marker_report.tex 保留 |
 | 方式三 | sections/40_follow3.tex | figures/follow3/ |
-| 方式四 | sections/50_follow4.tex | figures/follow4/ |
-| 组内协作 | sections/02_division.tex；封面摘要在 cover.tex | 无 |
-| 实验与视频证据 | sections/60_experiments.tex、61_video_evidence.tex | figures/site/、figures/video/ |
+| 方式四 | sections/50_follow4.tex；95_follow4_commands.tex（附录F） | figures/follow4/ |
+| 大组与组内分工 | sections/02_division.tex；全队封面摘要在 cover_collective.tex | 无 |
+| 全队方案与接口 | sections/03_collective_coordination.tex、03_architecture.tex | figures/collective_system.tex |
+| 实验、视频与共同验收 | sections/60_experiments.tex、61_video_evidence.tex、62_collective_results.tex | figures/site/、figures/video/ |
 | 引用与实现依据 | sections/80_references.tex、90_reproduction.tex、91_code_analysis.tex、92_parameter_snapshot.tex | data/、code_snapshot/、code_snapshot_current/ |
 
 各组独立维护对应章节和图形；公共入口、样式和跨模块接口协商调整。不要用某位贡献者在仓库 README 中的“我们组”推断全队组号，也不要将视频画面顺序自动等同于方式编号。
+
+本轮以远端 `139c0b7` 为整合基线。方式四最新实现是 `team_turtlebot_follow_plus` C++/AR三车队列，不是早期地图位姿适配器。方式四投稿中的三车子场景不能自动替代全队四种方式联合验收；其点云首车也不能直接认定运行了方式三完整包。历史源码分析与图表仍保留并注明来源，人员职责不作无依据扩展。`v1.pdf` 是本地参考原件，未改动；本次未重复提交该PDF。
 
 ## 图形与证据
 
